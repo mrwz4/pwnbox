@@ -7,7 +7,8 @@
 #   - SecLists + rockyou wordlists at predictable paths
 #   - zsh + Oh My Zsh + autosuggestions/syntax-highlighting
 #   - HTB aliases + `mkhtb` box scaffolder (with CLAUDE.md/AGENTS.md notes)
-#   - ligolo-ng, netexec, evil-winrm, Claude Code
+#   - python venv aliases (mkvenv/venvon/venvoff/rmvenv)
+#   - ligolo-ng, netexec, evil-winrm, Metasploit, Claude Code
 #
 # Idempotent: safe to re-run. Run as root (sudo ./htb-setup.sh).
 # Optional: TARGET_USER=youruser sudo -E ./htb-setup.sh
@@ -152,6 +153,24 @@ install_ferox() {
 }
 if command -v feroxbuster >/dev/null 2>&1; then ok "already present"
 else install_ferox && ok "installed" || warn "feroxbuster failed (install manually later)"; fi
+
+# ---------------------------------------------------------------------------
+# 4c. Metasploit Framework — NOT in Debian repos (Trixie only ships client
+#     libs like ruby-msfrpc-client), so use Rapid7's official omnibus
+#     installer. It adds its own apt repo + keyring and bundled Ruby/Postgres.
+# ---------------------------------------------------------------------------
+c "Metasploit Framework (Rapid7 omnibus installer)"
+if command -v msfconsole >/dev/null 2>&1; then ok "already present"
+else
+  tmp="$(mktemp -d)"
+  if curl -fsSL https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb \
+       -o "$tmp/msfinstall" && chmod 755 "$tmp/msfinstall" && "$tmp/msfinstall" >/dev/null 2>&1; then
+    ok "installed"
+  else
+    warn "metasploit install failed (install manually later)"
+  fi
+  rm -rf "$tmp"
+fi
 
 # ---------------------------------------------------------------------------
 # 5. Node + Claude Code (you run this per-box on HTB).
@@ -352,6 +371,16 @@ nmapa() {
   local ports; ports=\$(grep -oP '^\d+(?=/tcp\s+open)' nmap/allports.txt | paste -sd,)
   [[ -n "\$ports" ]] && nmap -p"\$ports" -sCV -oN nmap/services.txt "\$ip"
 }
+
+# --- python venv ---
+alias mkvenv='python3 -m venv .venv'                 # create .venv in cwd
+alias rmvenv='rm -rf .venv'
+venvon() {                                            # activate .venv (or first arg) if present
+  local dir="\${1:-.venv}"
+  [[ -f "\$dir/bin/activate" ]] || { echo "no venv at \$dir (try: mkvenv)"; return 1; }
+  source "\$dir/bin/activate"
+}
+alias venvoff='deactivate'
 
 # --- ligolo-ng ---
 # Two workflows: (a) let the proxy console make the interface via

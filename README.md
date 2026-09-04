@@ -44,6 +44,8 @@ port 3389 and log in as your user. The XFCE session starts automatically.
 - **Cracking:** hydra, john, hashcat.
 - **Release binaries** (not in Debian repos, pulled from GitHub into
   `/usr/local/bin`): ligolo-ng (proxy + agent) and feroxbuster.
+- **Metasploit Framework:** installed via Rapid7's official omnibus installer
+  (adds its own apt repo/keyring; not packaged for Debian, only Kali).
 - **Wordlists:** SecLists cloned from GitHub to `/usr/share/seclists` (~1.8 GB,
   symlinked at `/usr/share/wordlists/seclists`), with rockyou extracted from it
   to `/usr/share/wordlists/rockyou.txt`. Note: Debian has no `seclists` or
@@ -80,6 +82,10 @@ is optional — omit it to just scaffold.
 | `nmapa [ip]` | All-ports scan, then a service scan on what's open, into `nmap/` |
 | `serve` | `python3 -m http.server 8000` for file transfer |
 | `vpnup` / `vpndown` | Start/stop OpenVPN from a `.ovpn` in `~/htb/` |
+| `mkvenv` | `python3 -m venv .venv` in the cwd |
+| `venvon [dir]` | Activate `.venv` (or `dir`) in the cwd |
+| `venvoff` | `deactivate` the active venv |
+| `rmvenv` | `rm -rf .venv` |
 | `ligolo-start` | Start the ligolo-ng proxy with a self-signed cert |
 | `ligolo-tun` | Create and bring up the `ligolo` tun interface |
 | `ligolo-route <cidr>` | Route a target network through `ligolo` |
@@ -125,7 +131,7 @@ Flags, combinable:
 
 | Flag | Also does |
 |------|-----------|
-| `--tools` | Uninstall pipx tools, evil-winrm, Claude Code, ligolo binaries |
+| `--tools` | Uninstall pipx tools, evil-winrm, Claude Code, ligolo binaries, Metasploit |
 | `--xrdp` | Disable and purge xrdp and XFCE |
 | `--all` | `--tools` + `--xrdp` (does not touch `~/htb`) |
 | `--htbdir` | Delete `~/htb` and all box data — prompts first |

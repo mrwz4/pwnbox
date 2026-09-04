@@ -71,6 +71,9 @@ if [[ $DO_TOOLS -eq 1 ]]; then
   gem uninstall -aIx evil-winrm >/dev/null 2>&1 && ok "evil-winrm" || true
   as_user 'npm uninstall -g @anthropic-ai/claude-code >/dev/null 2>&1' && ok "claude-code" || true
   rm -f /usr/local/bin/ligolo-ng* /usr/local/bin/ligolo-agent && ok "ligolo bins" || true
+  apt-get purge -y metasploit-framework >/dev/null 2>&1 && ok "metasploit" || true
+  rm -f /etc/apt/sources.list.d/metasploit-framework.list /usr/share/keyrings/metasploit-framework.gpg
+  rm -rf /opt/metasploit-framework
 fi
 
 # --- 6. xrdp/xfce (opt-in) -------------------------------------------------
